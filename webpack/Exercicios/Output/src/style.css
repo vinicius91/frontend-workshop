@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Hanalei";
+  src: url("./Hanalei-Regular.ttf");
+  font-weight: 600;
+  font-style: normal;
+}
+
+body {
+  color: red;
+  font-family: "Hanalei";
+}
+
+div {
+  font-family: "Hanalei";
+  font-weight: 600;
+  font-style: normal;
+}
