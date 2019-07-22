@@ -1,0 +1,87 @@
+# Plugins
+
+Os __Plugins__ são o [backbone] (https://github.com/webpack/tapable) do webpack. O próprio webpack é construído no __mesmo sistema de plugin__ que você usa na configuração do seu webpack!
+
+They also serve the purpose of doing __anything else__ that a [loader](/concepts/loaders) cannot do.
+
+
+## Anatomia
+
+Um webpack __plugin__ é um objeto JavaScript que tem um método [`apply`] (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply_Objects/Function/apply). Este método é chamado pelo compilador webpack, dando acesso ao ciclo de vida da compilação __inteiro__.
+
+
+__ConsoleLogOnBuildWebpackPlugin.js__
+
+```javascript
+const pluginName = 'ConsoleLogOnBuildWebpackPlugin';
+
+class ConsoleLogOnBuildWebpackPlugin {
+  apply(compiler) {
+    compiler.hooks.run.tap(pluginName, compilation => {
+      console.log('The webpack build process is starting!!!');
+    });
+  }
+}
+```
+
+O primeiro parâmetro do método tap do hook do compilador deve ser uma versão camelized do nome do plugin. É aconselhável usar uma constante para isso para que ele possa ser reutilizado em todos os hooks.
+
+## Usage
+
+Como __plugins__ pode tomar argumentos/opções, você deve passar uma instância `nova` para a propriedade `plugins` na configuração do seu webpack.
+
+Dependendo de como você está usando o webpack, existem várias maneiras de usar plugins.
+
+
+
+### Configuration
+
+__webpack.config.js__
+
+```javascript
+const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
+const webpack = require('webpack'); //to access built-in plugins
+const path = require('path');
+
+module.exports = {
+  entry: './path/to/my/entry/file.js',
+  output: {
+    filename: 'my-first-webpack.bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        use: 'babel-loader'
+      }
+    ]
+  },
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new HtmlWebpackPlugin({template: './src/index.html'})
+  ]
+};
+```
+
+
+### Node API
+
+Ao usar a API do Node, você pode também passar plugins através da propriedade `plugins` na configuração.
+
+__some-node-script.js__
+
+```javascript
+const webpack = require('webpack'); //to access webpack runtime
+const configuration = require('./webpack.config.js');
+
+let compiler = webpack(configuration);
+
+new webpack.ProgressPlugin().apply(compiler);
+
+compiler.run(function(err, stats) {
+  // ...
+});
+```
+
+PSC: O exemplo visto acima é extremamente similar ao [runtime do webpack!](https://github.com/webpack/webpack/blob/e7087ffeda7fa37dfe2ca70b5593c6e899629a2c/bin/webpack.js#L290-L292) Há muitos exemplos de grandes usos escondidos no [webpack source code] (https://github.com/webpack/webpack) que você pode aplicar às suas próprias configurações e scripts!

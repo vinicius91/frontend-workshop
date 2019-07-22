@@ -1,0 +1,67 @@
+# Output
+
+Configurar as opções de configuração `output` diz ao webpack como escrever os arquivos compilados no disco. Note que, enquanto podem existir múltiplos pontos de entrada, apenas uma configuração de saída é especificada.
+
+
+## Modo de uso
+
+A exigência mínima para a propriedade do `output` em seu config do Webpack é ajustar seu valor a um objeto que inclui a seguinte propriedade:
+
+- Um `filename` para usar para o(s) arquivo(s) de saída.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  output: {
+    filename: 'bundle.js',
+  }
+};
+```
+
+Esta configuração permite a saída de um único arquivo `bundle.js` para o diretório `dist`.
+
+
+## Múltiplos pontos de entrada
+
+Se a sua configuração cria mais do que um único "chunk" (como com múltiplos pontos de entrada ou ao usar plugins como o CommonsChunkPlugin), você deve usar [substitutions](/configuration/output#output-filename) para garantir que cada arquivo tenha um nome único.
+
+```javascript
+module.exports = {
+  entry: {
+    app: './src/app.js',
+    search: './src/search.js'
+  },
+  output: {
+    filename: '[name].js',
+    path: __dirname + '/dist'
+  }
+};
+
+// Escreve no disco: ./dist/app.js, ./dist/search.js
+```
+
+
+## Avançado
+
+Está aqui um exemplo mais complicado de usar um CDN e hashes para assets:
+
+__config.js__
+
+```javascript
+module.exports = {
+  //...
+  output: {
+    path: '/home/proj/cdn/assets/[hash]',
+    publicPath: 'https://cdn.example.com/assets/[hash]/'
+  }
+};
+```
+
+Em casos onde o eventual `publicPath` de arquivos de saída não é conhecido em tempo de compilação, ele pode ser deixado em branco e definido dinamicamente em tempo de execução através da variável `__webpack_public_path__` no arquivo de ponto de entrada:
+
+```javascript
+__webpack_public_path__ = myRuntimePublicPath;
+
+// rest of your application entry
+```

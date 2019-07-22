@@ -1,0 +1,128 @@
+# Loaders (Carregadores)
+
+Carregadores são transformações que são aplicadas no código-fonte de um módulo. Elas permitem que você pré-processe arquivos enquanto você os `import` ou os "load". Assim, os carregadores são como "tasks" em outras ferramentas de compilação e fornecem uma maneira poderosa de lidar com os passos de compilação do front-end. Os carregadores podem transformar arquivos de uma linguagem diferente (como o TypeScript) para JavaScript ou imagens inline como URLs de dados. As carregadeiras permitem que você faça coisas como "importar" arquivos CSS diretamente de seus módulos JavaScript!
+
+
+## Exemplo
+
+Por exemplo, você pode usar carregadores para dizer ao webpack para carregar um arquivo CSS ou para converter TypeScript em JavaScript. Para fazer isso, você deve começar por instalar os carregadores que você precisa:
+
+``` bash
+npm install --save-dev css-loader
+npm install --save-dev ts-loader
+```
+
+E então instrua o webpack a usar o [`css-loader`] (/loaders/css-loader) para cada arquivo `.css` e o [`ts-loader`] (https://github.com/TypeStrong/ts-loader) para todos os arquivos `.ts`:
+
+__webpack.config.js__
+
+``` js
+module.exports = {
+  module: {
+    rules: [
+      { test: /\\.css$/, use: 'css-loader' },
+      { test: /\\.ts$/, use: 'ts-loader' }
+    ]
+  }
+};
+```
+
+
+## Usando carregadores
+
+Existem três maneiras de usar carregadores em sua aplicação:
+
+- [Configuration](#configuration) (recomendada): Especifique-os no seu arquivo __webpack.config.js__.
+- [Inline](#inline): Especifique-os explicitamente em cada instrução de `importação`.
+- [CLI](#cli): Especifique-os dentro de um comando shell.
+
+
+### Configuration
+
+`module.rules` permite que você especifique vários carregadores na configuração do seu webpack.
+Esta é uma maneira concisa de exibir carregadores, e ajuda a manter o código limpo. Ele também oferece uma visão geral completa de cada carregador respectivo.
+
+As carregadeiras são avaliadas/executadas da direita para a esquerda (ou de baixo para cima). No exemplo abaixo a execução começa com sass-loader, continua com css-loader e finalmente termina com style-loader.
+
+``` js-with-links
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\\.css$/,
+        use: [
+          // [style-loader](/loaders/style-loader)
+          { loader: 'style-loader' },
+          // [css-loader](/loaders/css-loader)
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true
+            }
+          },
+          // [sass-loader](/loaders/sass-loader)
+          { loader: 'sass-loader' }
+        ]
+      }
+    ]
+  }
+};
+```
+
+
+### Inline
+
+É possível especificar carregadores em uma instrução `import`, ou qualquer método equivalente de "importação". Separe os carregadores do recurso com `!`. Cada parte é resolvida em relação ao diretório atual.
+
+```js
+import Styles from 'style-loader!css-loader?modules!./styles.css';
+```
+
+É possível substituir quaisquer carregadores, preLoaders e postLoaders a partir da configuração prefixando a instrução inline `import`:
+
+- Prefixar com `!` desabilitará todos os carregadores normais configurados
+
+```js
+import Styles from '!style-loader!css-loader?modules!./styles.css';
+```
+
+- Prefixar com `!!` desabilitará todos os carregadores configurados (preLoaders, loaders, postLoaders)
+
+```js
+import Styles from '!!style-loader!css-loader?modules!./styles.css';
+```
+
+- Prefixar com `-!` desabilitará todos os preLoaders e loaders configurados, mas não postLoaders
+
+```js
+import Styles from '-!style-loader!css-loader?modules!./styles.css';
+```
+
+Opções podem ser passadas com um parâmetro de consulta, por exemplo `?key=value&foo=bar`, ou um objeto JSON, por exemplo  `?{"key":"value","foo":"bar"}`.
+
+Use o `module.rules` sempre que possível, pois isso reduzirá o boilerplate em seu código fonte e permitirá que você depure ou localize um carregador mais rápido se algo der errado.
+
+
+### CLI
+
+Você também pode usar carregadores através da CLI:
+
+```bash
+webpack --module-bind jade-loader --module-bind 'css=style-loader!css-loader'
+```
+
+Isso usa o `jade-loader` para arquivos `.jade`, e o `style-loader` e `css-loader` para arquivos `.css`.
+
+
+## Características de carregadores
+
+- Carregadores podem ser encadeados. Cada carregador na corrente aplica transformações ao recurso processado. Uma corrente é executada em ordem inversa. O primeiro carregador passa seu resultado (recurso com transformações aplicadas) para o próximo, e assim por diante. Finalmente, o webpack espera que o JavaScript seja retornado pelo último carregador da cadeia.
+- Os carregadores podem ser síncronos ou assíncronos.
+- Carregadores rodam em Node.js e podem fazer tudo o que for possível lá.
+- Carregadores podem ser configurados com um objeto `opções` (usando parâmetros `query` para definir opções ainda é suportado mas foi depreciado).
+- Módulos normais podem exportar um carregador além do normal `main` via `package.json` com o campo `loader`.
+- Plugins podem dar mais recursos aos carregadores.
+- Carregadores podem gerar arquivos arbitrários adicionais.
+
+Os carregadores permitem mais potência no ecossistema JavaScript através do pré-processamento das funções (carregadores). Os usuários agora têm mais flexibilidade para incluir lógicas granulares, como compressão, empacotamento, traduções de idiomas, etc.
+

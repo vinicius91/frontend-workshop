@@ -1,0 +1,81 @@
+# Entry Points (Ponto de entrada)
+
+Como mencionado nos conceitos chaves, existem várias maneiras de definir a propriedade `entry` na configuração do seu webpack. Nós lhe mostraremos as maneiras que você __can__ configura a propriedade `entry`, além de explicar porque ela pode ser útil para você.
+
+
+## Entrada Única (Shorthand) Syntax
+
+Modo de uso: `entry: string|Array<string>`
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  entry: './path/to/my/entry/file.js'
+};
+```
+
+A sintaxe de entrada única para a propriedade `entry` é uma abreviatura para:
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  entry: {
+    main: './path/to/my/entry/file.js'
+  }
+};
+```
+
+__O que acontece quando você passa um array para `entry`?__ Passar um array de caminhos de arquivos para a propriedade `entry` cria o que é conhecido como __"multi-main entry"__. Isto é útil quando você gostaria de injetar vários arquivos dependentes juntos e representar graficamente suas dependências em um "trecho".
+
+Esta é uma ótima escolha quando você está procurando rapidamente configurar um pacote web para uma aplicação ou ferramenta com um ponto de entrada (ou seja, uma biblioteca). No entanto, não há muita flexibilidade em estender ou escalar sua configuração com essa sintaxe.
+
+
+## Syntax de Objeto
+
+Modo de uso: `entry: {[entryChunkName: string]: string|Array<string>}`
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  entry: {
+    app: './src/app.js',
+    adminApp: './src/adminApp.js'
+  }
+};
+```
+A sintaxe do objeto é mais verbosa. No entanto, esta é a forma mais escalável de definir entradas/entradas em sua aplicação.
+
+__"Configurações escaláveis de webpack"__ são aquelas que podem ser reutilizadas e combinadas com outras configurações parciais. Esta é uma técnica popular usada para separar preocupações por ambiente, destino de compilação e tempo de execução. Eles são então unidos usando ferramentas especializadas como [webpack-merge](https://github.com/survivejs/webpack-merge).
+
+## Cenários
+
+Abaixo está uma lista de configurações de entrada e seus casos de uso no mundo real:
+
+### Entradas separadas de aplicações e Vendors
+
+Na versão do webpack < 4 era comum adicionar vendedores como um ponto de entrada separado para compilá-lo como um arquivo separado (em combinação com o `CommonsChunkPlugin`). <br><br><br> Isso é desencorajado no webpack 4. Em vez disso, a opção `optimization.splitChunks` cuida de separar fornecedores e módulos de aplicativos e criar um arquivo separado. __Não crie uma entrada para fornecedores ou outras coisas que não seja o ponto de partida da execução.
+
+### Aplicação de mútiplas páginas
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  entry: {
+    pageOne: './src/pageOne/index.js',
+    pageTwo: './src/pageTwo/index.js',
+    pageThree: './src/pageThree/index.js'
+  }
+};
+```
+
+__O que é que isto faz?__ Estamos a dizer ao webpack que gostaríamos de ter 3 gráficos de dependência separados (como o exemplo acima).
+
+__Porquê?__ Em uma aplicação multi-página, o servidor vai buscar um novo documento HTML para você. A página recarrega este novo documento e os ativos são recarregados. No entanto, isso nos dá a oportunidade única de fazer várias coisas:
+
+- Use `optimization.splitChunks` para criar pacotes de código de aplicativo compartilhado entre cada página. Aplicativos de várias páginas que reutilizam muitos códigos/módulos entre pontos de entrada podem se beneficiar muito dessas técnicas, já que o número de pontos de entrada aumenta.
+
+Como regra geral: Use exatamente um ponto de entrada para cada documento HTML.

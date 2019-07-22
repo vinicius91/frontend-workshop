@@ -1,0 +1,19 @@
+{
+  "name": "assetmanagement",
+  "version": "1.0.0",
+  "description": "If you've been following the guides from the start, you will now have a small project that shows \"Hello webpack\". Now let's try to incorporate some other assets, like images, to see how they can be handled.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
+}
