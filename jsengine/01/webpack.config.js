@@ -13,11 +13,11 @@ module.exports = {
   ],
   output: {
     filename: "[name].[contenthash].js",
-    path: path.resolve(__dirname, "output/dist")
+    path: path.resolve(__dirname, "dist")
   },
   devtool: "inline-source-map",
   devServer: {
-    contentBase: "./output/dist"
+    contentBase: "./dist"
   },
   module: {
     rules: [
