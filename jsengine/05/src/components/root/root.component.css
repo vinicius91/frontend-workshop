@@ -1,0 +1,11 @@
+body {
+  background: #f7f7f9;
+}
+
+.container {
+  margin: auto;
+  max-width: 840px;
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+}
