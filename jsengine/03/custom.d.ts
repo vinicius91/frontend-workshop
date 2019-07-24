@@ -1,8 +1,3 @@
-declare module "*.svg" {
-  const svg: any;
-  export default svg;
-}
-
 declare module "*.ico" {
   const ico: any;
   export default ico;

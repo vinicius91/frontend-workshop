@@ -58,13 +58,12 @@ function PostsComponent(data: Post[]): HTMLDivElement {
 function bootstrap() {
   const appFacade = new AppFacade();
   const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
-
-  const users = UsersComponent(appFacade.getUsers());
-  const posts = PostsComponent(appFacade.getPosts());
-
-  body.appendChild(users);
-  body.appendChild(posts);
-
+  Promise.all([appFacade.getUsers(), appFacade.getPosts()]).then(data => {
+    const users = data[0];
+    const posts = data[1];
+    body.appendChild(UsersComponent(users));
+    body.appendChild(PostsComponent(posts));
+  });
   setFavIcon();
 }
 

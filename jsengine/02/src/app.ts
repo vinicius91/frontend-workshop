@@ -1,7 +1,7 @@
 import icon from "./assets/favicon.ico";
-import UserService from "../services/user.service";
-import PostService from "../services/post.service";
-import { AppFacade } from "../services/app.facade";
+import UserService from "./services/user.service";
+import PostService from "./services/post.service";
+import { AppFacade } from "./services/app.facade";
 
 function setFavIcon() {
   const link: HTMLLinkElement =
